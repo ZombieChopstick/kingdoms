@@ -1,4 +1,4 @@
-kingdoms
+Kingdoms
 ========
 
 Trading Card/Board Game
