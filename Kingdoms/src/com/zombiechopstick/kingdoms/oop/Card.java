@@ -1,6 +1,8 @@
-package com.zombiechopstick.kingdoms;
+package com.zombiechopstick.kingdoms.oop;
 
 import java.util.ArrayList;
+
+import com.zombiechopstick.kingdoms.components.StatModifier;
 
 public class Card {
 	private String name;

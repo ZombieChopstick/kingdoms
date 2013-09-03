@@ -1,6 +1,8 @@
-package com.zombiechopstick.kingdoms;
+package com.zombiechopstick.kingdoms.oop;
 
 import java.util.HashMap;
+
+import com.zombiechopstick.kingdoms.components.Stat;
 
 public class Character {
 	private String name;
@@ -20,7 +22,7 @@ public class Character {
 	
 	public void attack(Character...targets) {
 		for(Character enemy : targets) {
-			enemy.getStat("Health").adjustStat(-getStat("Attack").getValue());
+			enemy.getStat("Health").setValue(-getStat("Attack").getValue());
 		}
 	}
 	

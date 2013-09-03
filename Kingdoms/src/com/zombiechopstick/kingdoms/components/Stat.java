@@ -1,6 +1,8 @@
-package com.zombiechopstick.kingdoms;
+package com.zombiechopstick.kingdoms.components;
 
-public class Stat {
+public class Stat implements Component {
+
+	private static final long serialVersionUID = 5422127079928320716L;
 	private String name;
 	private int value;
 	
@@ -9,7 +11,7 @@ public class Stat {
 		this.value = intialValue;
 	}
 	
-	public void adjustStat(int newValue) {
+	public void setValue(int newValue) {
 		this.value += newValue;
 	}
 	

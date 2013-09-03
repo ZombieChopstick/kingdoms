@@ -1,4 +1,6 @@
-package com.zombiechopstick.kingdoms;
+package com.zombiechopstick.kingdoms.oop;
+
+import com.zombiechopstick.kingdoms.components.StatModifier;
 
 public class Tester {
 	public static void main(String[] args) {
@@ -35,19 +37,19 @@ public class Tester {
 		System.out.println("==========================================");
 		System.out.println("Applying Potion to Leader 1");
 		for(StatModifier mod : potionCard.getStatModifiers()) {
-			leader1.getStat(mod.getStat()).adjustStat(mod.getAmount());
+			leader1.getStat(mod.getStat()).setValue(mod.getAmount());
 		}
 		System.out.println(leader1.toString());
 		System.out.println("==========================================");
 		System.out.println("Applying Potion to Leader 2");
 		for(StatModifier mod : potionCard.getStatModifiers()) {
-			leader2.getStat(mod.getStat()).adjustStat(mod.getAmount());
+			leader2.getStat(mod.getStat()).setValue(mod.getAmount());
 		}
 		System.out.println(leader2.toString());
 		System.out.println("==========================================");
 		System.out.println("Applying Attack Boost to Leader 1");
 		for(StatModifier mod : attackBoostCard.getStatModifiers()) {
-			leader1.getStat(mod.getStat()).adjustStat(mod.getAmount());
+			leader1.getStat(mod.getStat()).setValue(mod.getAmount());
 		}
 		System.out.println(leader1.toString());
 		System.out.println("==========================================");
@@ -56,7 +58,7 @@ public class Tester {
 		System.out.println("==========================================");
 		System.out.println("Applying " + potionCard.getName() + " to Leader 2");
 		for(StatModifier mod : potionCard.getStatModifiers()) {
-			leader2.getStat(mod.getStat()).adjustStat(mod.getAmount());
+			leader2.getStat(mod.getStat()).setValue(mod.getAmount());
 		}
 		System.out.println(leader2.toString());
 		System.out.println("==========================================");
