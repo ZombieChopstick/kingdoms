@@ -1,30 +1,35 @@
 package com.zombiechopstick.kingdoms;
 
+import java.util.UUID;
+
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
-import com.badlogic.gdx.graphics.GL10;
-import com.badlogic.gdx.graphics.OrthographicCamera;
-import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.graphics.Texture.TextureFilter;
-import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.zombiechopstick.kingdoms.components.Card;
+import com.zombiechopstick.kingdoms.components.Clickable;
+import com.zombiechopstick.kingdoms.components.Dragable;
+import com.zombiechopstick.kingdoms.components.Name;
+import com.zombiechopstick.kingdoms.components.Owner;
+import com.zombiechopstick.kingdoms.components.Position;
+import com.zombiechopstick.kingdoms.components.Renderable;
+import com.zombiechopstick.kingdoms.components.Size;
+import com.zombiechopstick.kingdoms.components.Stat;
+import com.zombiechopstick.kingdoms.components.StatModifier;
 
 public class GameScreen implements Screen {
-	private OrthographicCamera camera;
 	private SpriteBatch batch;
-	private Texture texture;
-	private Sprite sprite;
+	private EntityManager manager = new EntityManager();
+	private RenderSystem render = new RenderSystem(manager);
+	private InputSystem input = new InputSystem(manager);
+	private DeckSystem deck;
+	private HandSystem hand;
 	
 	@Override
-	public void render(float delta) {
-		Gdx.gl.glClearColor(1, 1, 1, 1);
-		Gdx.gl.glClear(GL10.GL_COLOR_BUFFER_BIT);
-		
-		batch.setProjectionMatrix(camera.combined);
-		batch.begin();
-		sprite.draw(batch);
-		batch.end();
+	public void render(float delta) {		
+		render.update(delta, batch);
+		input.update(delta, batch);
+		deck.update(delta, batch);		
+		hand.update(delta, batch);
 	}
 
 	@Override
@@ -34,21 +39,61 @@ public class GameScreen implements Screen {
 
 	@Override
 	public void show() {
-		float w = Gdx.graphics.getWidth();
-		float h = Gdx.graphics.getHeight();
-		
-		camera = new OrthographicCamera(1, h/w);
 		batch = new SpriteBatch();
+
+		UUID potionCard = manager.createEntity();
+		//manager.addEntityToScreen(potionCard);
+		manager.addComponents(potionCard, 
+				new Name("Potion"), 
+				new StatModifier("Health", 20),
+				new Renderable("potioncard.png"), 
+				new Card(false,Card.PlayState.INDECK), 
+				new Dragable(),
+				new Owner("Player 1"));
 		
-		texture = new Texture(Gdx.files.internal("data/libgdx.png"));
-		texture.setFilter(TextureFilter.Linear, TextureFilter.Linear);
+		UUID attackBoostCard = manager.createEntity();
+		//manager.addEntityToScreen(attackBoostCard);
+		manager.addComponents(attackBoostCard, 
+				new Name("Attack Boost"),
+				new StatModifier("Attack", 10),
+				new Renderable("attackboostcard.png"),
+				new Card(false, Card.PlayState.INDECK),
+				new Dragable(),
+				new Owner("Player 1"));
 		
-		TextureRegion region = new TextureRegion(texture, 0, 0, 512, 275);
+		UUID leader1 = manager.createEntity();
+		//manager.addEntityToScreen(leader1);
+		manager.addComponents(leader1, 
+				new Name("Dwarf Leader"), 
+				new Stat("Health", 50), 
+				new Stat("Attack", 60), 
+				new Renderable("dwarfleader.png"),
+				new Position(10,Gdx.graphics.getHeight()-240),
+				new Size(10,Gdx.graphics.getHeight()-240,175,230),
+				new Owner("Player 1"));
 		
-		sprite = new Sprite(region);
-		sprite.setSize(0.9f, 0.9f * sprite.getHeight() / sprite.getWidth());
-		sprite.setOrigin(sprite.getWidth()/2, sprite.getHeight()/2);
-		sprite.setPosition(-sprite.getWidth()/2, -sprite.getHeight()/2);
+		UUID leader2 = manager.createEntity();
+		//manager.addEntityToScreen(leader2);
+		manager.addComponents(leader2, 
+				new Name("Centaur Leader"), 
+				new Stat("Health", 100), 
+				new Stat("Attack", 60), 
+				new Renderable("centaurleader.png"),
+				new Position(Gdx.graphics.getWidth()-185,Gdx.graphics.getHeight()-240),
+				new Size(Gdx.graphics.getWidth()-185,Gdx.graphics.getHeight()-240,175,230),
+				new Owner("Player 2"));
+		
+		UUID deck = manager.createEntity();
+		//manager.addEntityToScreen(deck);
+		manager.addComponents(deck, 
+				new Renderable("deck.png"),
+				new Position(Gdx.graphics.getWidth()-185,0),
+				new Size(Gdx.graphics.getWidth()-185,0,175,230),
+				new Clickable(),
+				new Owner("Player 1"));
+		
+		this.deck = new DeckSystem(manager, "Player 1");
+		this.hand = new HandSystem(manager, "Player 1");
 	}
 
 	@Override
@@ -68,8 +113,8 @@ public class GameScreen implements Screen {
 
 	@Override
 	public void dispose() {
-		batch.dispose();
-		texture.dispose();
+		//batch.dispose();
+		//texture.dispose();
 	}
 
 }

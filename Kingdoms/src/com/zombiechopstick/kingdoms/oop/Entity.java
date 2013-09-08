@@ -1,4 +1,4 @@
-package com.zombiechopstick.kingdoms;
+package com.zombiechopstick.kingdoms.oop;
 
 import java.io.Serializable;
 import java.util.ArrayList;

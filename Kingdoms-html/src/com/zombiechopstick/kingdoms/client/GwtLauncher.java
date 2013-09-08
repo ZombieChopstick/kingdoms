@@ -14,6 +14,6 @@ public class GwtLauncher extends GwtApplication {
 
 	@Override
 	public ApplicationListener getApplicationListener () {
-		return new KingdomsGame();
+		return new KingdomsGame("Player 1");
 	}
 }

@@ -3,9 +3,12 @@ package com.zombiechopstick.kingdoms;
 import java.util.List;
 import java.util.UUID;
 
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.math.Rectangle;
 import com.zombiechopstick.kingdoms.components.Clickable;
-import com.zombiechopstick.kingdoms.components.Component;
-import com.zombiechopstick.kingdoms.components.Renderable;
+import com.zombiechopstick.kingdoms.components.Dragable;
+import com.zombiechopstick.kingdoms.components.Size;
 
 public class InputSystem implements ComponentSystem {
 
@@ -17,12 +20,33 @@ public class InputSystem implements ComponentSystem {
 	}
 	
 	@Override
-	public void update(int delta) {
-		List<UUID> entities = manager.getAllEntitiesWithComponent(Renderable.class);
-		for(UUID uid : entities) {
-			@SuppressWarnings("unused")
-			Component c = manager.getComponent(uid, Clickable.class);
-			//if mouse clicked inside entity, perform event
+	public void update(float delta, SpriteBatch batch) {
+		List<UUID> clickables = manager.getAllEntitiesWithComponent(Clickable.class);
+		List<UUID> dragables = manager.getAllEntitiesWithComponent(Dragable.class);
+		
+		for(UUID uid : clickables) {
+			Size size = manager.getComponent(uid, Size.class);
+			Rectangle bbox = size.getBbox();
+			if(bbox.contains(Gdx.input.getX(), Gdx.graphics.getHeight() - Gdx.input.getY()) && Gdx.input.justTouched()) {
+				//System.out.println("clicking");
+				Clickable click = manager.getComponent(uid, Clickable.class);
+				click.setClicked(true);
+			}
+		}
+		for(UUID uid : dragables) {
+			Size size = manager.getComponent(uid, Size.class);
+			Dragable drag = manager.getComponent(uid, Dragable.class);
+			if(size != null) {
+				Rectangle bbox = size.getBbox();
+				if(bbox.contains(Gdx.input.getX(), Gdx.graphics.getHeight() - Gdx.input.getY()) && Gdx.input.isTouched()) {
+					drag.setDragged(true);
+					//System.out.println("dragging");
+					break;
+				}
+				else {
+					drag.setDragged(false);
+				}
+			}
 		}
 	}
 
@@ -30,5 +54,4 @@ public class InputSystem implements ComponentSystem {
 	public void addManager(EntityManager manager) {
 		this.manager = manager;
 	}
-
 }

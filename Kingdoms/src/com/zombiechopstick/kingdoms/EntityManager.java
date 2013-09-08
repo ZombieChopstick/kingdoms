@@ -2,6 +2,7 @@ package com.zombiechopstick.kingdoms;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.UUID;
@@ -24,6 +25,10 @@ public class EntityManager implements Serializable {
 		allEntities.add(uid);
 		return uid;
 	}
+	
+	public void addEntity(UUID uid) {
+		allEntities.add(uid);
+	}
 
 	public void addComponents(UUID uid, Component... components) {
 		for (Component c : components) {
@@ -45,7 +50,7 @@ public class EntityManager implements Serializable {
 	public List<UUID> getAllEntitiesWithComponent(
 			Class<? extends Component> type) {
 		List<UUID> entities = new ArrayList<UUID>();
-
+		
 		if (type != null && allComponents.containsKey(type)) {
 			entities.addAll(allComponents.get(type).keySet());
 		}
@@ -88,5 +93,13 @@ public class EntityManager implements Serializable {
 		}
 
 		return result;
+	}
+	
+	public List<UUID> getAllEntities() {
+		return allEntities;
+	}
+	
+	public Collection<HashMap<UUID, Component>> getAllComponents() {
+		return allComponents.values();
 	}
 }
