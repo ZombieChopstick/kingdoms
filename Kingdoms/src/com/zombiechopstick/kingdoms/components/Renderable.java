@@ -15,5 +15,9 @@ public class Renderable implements Component{
 	public void setSprite(String sprite) {
 		this.sprite = sprite;
 	}
+	
+	public String toString() {
+		return sprite;
+	}
 
 }

@@ -12,4 +12,7 @@ public class Dragable implements Component {
 		this.dragged = dragged;
 	}
 	
+	public String toString() {
+		return "Dragable";
+	}
 }

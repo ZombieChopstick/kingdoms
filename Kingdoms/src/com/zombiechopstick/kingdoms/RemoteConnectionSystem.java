@@ -5,21 +5,22 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
 import java.net.UnknownHostException;
-import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.zombiechopstick.kingdoms.components.ChatMessage;
 
 public class RemoteConnectionSystem extends Thread implements ComponentSystem  {
 
 	private static final long serialVersionUID = -668180559250610382L;
 	private EntityManager manager;
 	private Socket server;
-	private ObjectOutputStream objectOut;
+	private static ObjectOutputStream objectOut;
 	private ObjectInputStream objectIn;
 	private String playerName;
 	private int connectionAttempts = 0;
-	private ArrayList<String> remoteEntities = new ArrayList<String>();
+	private EntityGeneratorSystem egs;
 	
 	public RemoteConnectionSystem(EntityManager manager, String playerName) {
 		this.manager = manager;
@@ -31,7 +32,7 @@ public class RemoteConnectionSystem extends Thread implements ComponentSystem  {
 		while(true) {
 			if(server==null && connectionAttempts < 5) {
 				try {
-					server = new Socket("192.168.0.15",8080);
+					server = new Socket("192.168.0.11",8080);
 					objectOut = new ObjectOutputStream(server.getOutputStream());
 					objectIn = new ObjectInputStream(server.getInputStream());
 					sendObject("A|" + playerName);
@@ -59,22 +60,32 @@ public class RemoteConnectionSystem extends Thread implements ComponentSystem  {
 						}
 						if(actions[0].equals("WAIT")) {
 							System.out.println("Waiting for another player to join game.");
+							//UUID chatMessage = manager.createEntity();
+							//manager.addComponents(chatMessage, new ChatMessage("Waiting for another player to join..."));
 						}
 						if(actions[0].equals("ACKJ")) {
 							System.out.println(actions[1]);
-							sendObject("CHAT|" + playerName + ": Hi Opponent");
-							
+							sendObject("CHAT|" + playerName + " has joined the game.");
+							sendObject("SYN|");
+							sendObject(egs.generateRemoteEntities3());
 						}
 						if(actions[0].equals("CHAT")) {
 							System.out.println(actions[1]);
+							UUID chatMessage = manager.createEntity();
+							manager.addComponents(chatMessage, new ChatMessage(actions[1]));
 						}
 						if(actions[0].equals("C")) {
 							if(actions[1].equals("CLICK")) {
 								System.out.println("Opponent clicked on their screen");
 							}
 						}
-						if(actions[0].equals("SYN")) {
-							remoteEntities.add(remoteCommand);
+						if(actions[0].equals("SYNACK")) {
+							@SuppressWarnings("unchecked")
+							List<String> packets = (List<String>) objectIn.readObject();
+							egs.generateLocalEntities(packets);
+						}
+						if(actions[0].equals("Q")) {
+							//do something once opponent has quit
 						}
 					}
 				} catch (IOException e) {
@@ -96,7 +107,7 @@ public class RemoteConnectionSystem extends Thread implements ComponentSystem  {
 		}
 	}
 	
-	public void sendObject(Object object) {
+	public static void sendObject(Object object) {
 		try {
 			objectOut.writeObject(object);
 		} catch (IOException e) {
@@ -104,13 +115,13 @@ public class RemoteConnectionSystem extends Thread implements ComponentSystem  {
 		}
 	}
 	
-	public ArrayList<String> getRemoteEntities() {
-		return remoteEntities;
-	}
-	
 	@Override
 	public void addManager(EntityManager manager) {
 		this.manager = manager;
+	}
+	
+	public void addEntityGenerator(EntityGeneratorSystem egs) {
+		this.egs = egs;
 	}
 
 	@Override

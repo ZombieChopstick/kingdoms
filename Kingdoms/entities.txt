@@ -1,5 +1,0 @@
-E|Attack Boost|1|SM(ATT,10)|attackboostcard.png|Card|Player 1
-E|Dwarf Leader|2|ST(HP,50)|ST(ATT,60)|dwarfleader.png||Player 1
-C|MV|ID|X|Y
-C|AT|ID|ID
-C|AC|ID|ID

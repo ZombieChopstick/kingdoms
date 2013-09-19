@@ -16,4 +16,8 @@ public class Owner implements Component {
 		this.playerName = playerName;
 	}
 	
+	public String toString() {
+		return playerName;
+	}
+	
 }

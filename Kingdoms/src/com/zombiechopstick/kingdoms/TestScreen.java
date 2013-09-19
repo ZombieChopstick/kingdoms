@@ -10,8 +10,10 @@ public class TestScreen implements Screen {
 	private EntityGeneratorSystem entities = new EntityGeneratorSystem(manager);
 	private RenderSystem render = new RenderSystem(manager);
 	private InputSystem input = new InputSystem(manager);
+	private ChatSystem chat;
 	private DeckSystem deck;
 	private HandSystem hand;
+	private BoardSystem board;
 	private RemoteConnectionSystem remote;
 	//Replace with ProfileSystem
 	String playerName;
@@ -27,9 +29,11 @@ public class TestScreen implements Screen {
 		input.update(delta, batch);
 		deck.update(delta, batch);		
 		hand.update(delta, batch);
+		chat.update(delta, batch);
+		board.update(delta, batch);
 		
 		if(Gdx.input.justTouched()) {
-			remote.sendObject("C|CLICK");
+			RemoteConnectionSystem.sendObject("C|CLICK");
 		}
 	}
 
@@ -45,10 +49,13 @@ public class TestScreen implements Screen {
 		batch = new SpriteBatch();
 		this.deck = new DeckSystem(manager, playerName);
 		this.hand = new HandSystem(manager, playerName);
-		entities.generateLocalEntities();
+		this.chat = new ChatSystem(manager, playerName);
+		entities.generateLocalEntities(playerName);
 		remote = new RemoteConnectionSystem(manager, playerName);
 		remote.start();
-		entities.generateRemoteEntities(remote);
+		remote.addEntityGenerator(entities);
+		board = new BoardSystem(manager);
+		board.create();
 		
 	}
 

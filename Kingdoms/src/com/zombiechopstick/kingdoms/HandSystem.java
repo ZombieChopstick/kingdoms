@@ -30,14 +30,19 @@ public class HandSystem implements ComponentSystem {
 	public void update(float delta, SpriteBatch batch) {
 		List<UUID> cards = manager.getAllEntitiesWithComponent(Card.class);
 		
+		int opponentCount = 1;
 		for(UUID uid : cards) {
 			Card card = manager.getComponent(uid, Card.class);
 			Owner player = manager.getComponent(uid, Owner.class);
 			
 			if(card.getCurrentState() == Card.PlayState.INHAND && !cardsInHand.contains(uid) && player.getPlayerName().equals(handOwner)) {
-				manager.addComponents(uid, new Position(5 + cardsInHand.size()*180, 0));
-				manager.addComponents(uid, new Size(5 + cardsInHand.size()*180,0,175,230));
+				manager.addComponents(uid, new Position(cardsInHand.size()*180 + 5, 0));
+				manager.addComponents(uid, new Size(cardsInHand.size()*180 + 5,0,175,230));
 				cardsInHand.add(uid);
+			} else if(!cardsInHand.contains(uid) && !player.getPlayerName().equals(handOwner)) {
+				manager.addComponents(uid, new Position(80*opponentCount, 650));
+				manager.addComponents(uid, new Size(80*opponentCount,650,175,230));
+				opponentCount++;
 			}
 		}
 		

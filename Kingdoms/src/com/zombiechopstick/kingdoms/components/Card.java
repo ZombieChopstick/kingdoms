@@ -27,4 +27,8 @@ public class Card implements Component {
 	public void setCurrentState(PlayState currentState) {
 		this.currentState = currentState;
 	};	
+	
+	public String toString() {
+		return "Card";
+	}
 }

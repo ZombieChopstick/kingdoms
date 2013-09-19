@@ -14,6 +14,6 @@ public class KingdomsGame extends Game {
 	}
 	
 	public void dispose() {
-		System.out.println("Exiting");
+
 	}
 }

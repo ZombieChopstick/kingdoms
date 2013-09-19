@@ -26,4 +26,8 @@ public class StatModifier implements Component {
 	public void setAmount(int amount) {
 		this.amount = amount;
 	}
+	
+	public String toString() {
+		return "SM(" + stat + "," + amount + ")";
+	}
 }

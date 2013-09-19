@@ -11,6 +11,9 @@ import java.util.List;
 import java.util.Scanner;
 import java.util.UUID;
 
+import javax.swing.JButton;
+import javax.swing.JFrame;
+
 public class GameServer {
 	ServerSocket server = null;
 	ArrayList<String> players = new ArrayList<String>();
@@ -21,6 +24,7 @@ public class GameServer {
 		try {
 			server = new ServerSocket(8080);
 			System.out.println("Server Started on port 8080");
+			//GameServerGUI gui = new GameServerGUI();
 			Socket client = null;
 			while(true) {
 				client = server.accept();
@@ -32,8 +36,15 @@ public class GameServer {
 						Scanner scan = new Scanner(System.in);
 						while(scan.hasNextLine()) {
 							for(Client player : clients) {
-								sendObject(player,"Server: " + scan.nextLine());
-								Thread.yield();
+								try {
+									player.getObjectOutputStream().writeObject("Server: " + scan.nextLine());
+									player.getObjectOutputStream().flush();
+									Thread.sleep(50);
+								} catch (IOException e) {
+									e.printStackTrace();
+								} catch (InterruptedException e) {
+									e.printStackTrace();
+								}
 							}
 						}
 					}
@@ -94,6 +105,24 @@ public class GameServer {
 	public static void main(String[] args) {
 		@SuppressWarnings("unused")
 		GameServer server = new GameServer();					
+	}
+	
+	public class GameServerGUI extends JFrame {
+
+		private static final long serialVersionUID = -1526718207886671807L;
+		
+		public GameServerGUI() {
+			setTitle("Server");
+			setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+			JButton startbutton = new JButton("Start"); 
+			getContentPane().add(startbutton);
+			JButton stopbutton = new JButton("Stop"); 
+			getContentPane().add(stopbutton);
+			pack();
+			setSize(800, 600);
+			setVisible(true);
+		}
+		
 	}
 	
 	public class Client extends Thread {
@@ -171,7 +200,7 @@ public class GameServer {
 							joinGame(this);
 						}
 						else if (actions[0].equals("CHAT")) {
-							sendObject(opponent,"CHAT|" + actions[1]);
+							if(clients.contains(opponent)) sendObject(opponent,"CHAT|" + actions[1]);
 						}
 						else if (actions[0].equals("C")) {
 							if(actions[1].equals("CLICK") && opponent!=null) {
@@ -180,21 +209,26 @@ public class GameServer {
 						}
 						else if (actions[0].equals("SYN")) {
 							if(opponent!=null) {
-								sendObject(opponent,entities);
+								sendObject(opponent,"SYNACK|");
+								sendObject(opponent,ins.readObject());
 							}
 						}
-						else if (actions[0].equals("SYNACK")) {
-							
-						}
+						/*else if (actions[0].equals("SYNACK")) {
+							List<UUID> remoteEntities = (List<UUID>) ins.readObject();
+							outs.writeObject("SYN|");
+							outs.writeObject(remoteEntities);
+						}*/
 					}
 				} catch (SocketException e){
 						try {
+							if(clients.contains(opponent)) sendObject(opponent, "CHAT|" + opponent.getPlayerName() + " has disconnected.");
 							ins.close();
 							outs.close();
 							client.close();
 							client = null;
 							clients.remove(this);
 							System.out.println(playerName + " left the server.");
+							
 							this.interrupt();
 						} catch (IOException e1) {
 							e1.printStackTrace();

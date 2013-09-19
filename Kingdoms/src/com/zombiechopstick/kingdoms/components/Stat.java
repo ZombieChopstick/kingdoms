@@ -22,4 +22,8 @@ public class Stat implements Component {
 	public int getValue() {
 		return value;
 	}
+	
+	public String toString() {
+		return "ST(" + name + "," + value + ")";
+	}
 }

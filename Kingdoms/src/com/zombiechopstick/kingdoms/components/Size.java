@@ -54,5 +54,8 @@ public class Size implements Component {
 	public void setHeight(int height) {
 		this.height = height;
 	}
-
+	
+	public String toString() {
+		return x + "," + y + "," + height + "," + width;
+	}
 }

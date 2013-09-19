@@ -11,4 +11,8 @@ public class Clickable implements Component {
 	public void setClicked(boolean clicked) {
 		this.clicked = clicked;
 	}
+	
+	public String toString() {
+		return "Clickable";
+	}
 }

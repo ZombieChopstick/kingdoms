@@ -12,6 +12,7 @@ import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.zombiechopstick.kingdoms.components.Position;
 import com.zombiechopstick.kingdoms.components.Renderable;
+import com.zombiechopstick.kingdoms.components.Size;
 
 public class RenderSystem implements ComponentSystem {
 
@@ -31,6 +32,8 @@ public class RenderSystem implements ComponentSystem {
 		assetManager.load("data/dwarfleader.png", Texture.class);
 		assetManager.load("data/centaurleader.png", Texture.class);
 		assetManager.load("data/deck.png", Texture.class);
+		assetManager.load("data/hex.png",Texture.class);
+		assetManager.load("data/hexhover.png",Texture.class);
 		assetManager.finishLoading();
 	}
 	
@@ -40,11 +43,13 @@ public class RenderSystem implements ComponentSystem {
 		Gdx.gl.glClear(GL10.GL_COLOR_BUFFER_BIT);
 		batch.begin();
 		List<UUID> entities = manager.getAllEntitiesWithComponent(Renderable.class);
+
 		for(UUID uid : entities) {
 			Renderable texture = manager.getComponent(uid, Renderable.class);
 			Position position = manager.getComponent(uid, Position.class);
+			Size size = manager.getComponent(uid, Size.class);
 			if(texture != null && position != null) {
-				batch.draw(assetManager.get("data/" + texture.getSprite(),Texture.class), position.getX(), position.getY(), 175, 230);
+				batch.draw(assetManager.get("data/" + texture.getSprite(),Texture.class), position.getX(), position.getY(), size.getWidth(), size.getHeight());
 			}
 		}
 		//Temporary Debugging
